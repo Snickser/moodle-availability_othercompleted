@@ -80,21 +80,28 @@ class condition extends \core_availability\condition {
     }
 
     public function is_available($not, \core_availability\info $info, $grabthelot, $userid) {
-        
-        global $DB;
+    global $DB;
 
-        $course = $this->courseid;
-        $sqlcoursecomplete = "SELECT * FROM {course_completions} as a WHERE a.course = $course AND a.userid = $userid";
-        $datacompletes = $DB->get_records_sql($sqlcoursecomplete);
-        $allow = false;
-        foreach($datacompletes as $datacomplete){
+    $courseid = $this->cmid;
+    $allow = false;
 
-            if($datacomplete->timecompleted>0){
-                $allow = true; 
-            }
+    $sql = "SELECT timecompleted FROM {course_completions} WHERE course = :course AND userid = :userid";
+    $params = ['course' => $courseid, 'userid' => $userid];
+
+    $records = $DB->get_records_sql($sql, $params);
+
+    foreach ($records as $record) {
+        if (!empty($record->timecompleted)) {
+            $allow = true;
+            break;
         }
-        return $allow;
     }
+
+    $result = $not ? !$allow : $allow;
+
+    return $result;
+}
+
 
     /**
      * Returns a more readable keyword corresponding to a completion state.
