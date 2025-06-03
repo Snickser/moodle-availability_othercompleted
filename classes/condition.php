@@ -82,7 +82,7 @@ class condition extends \core_availability\condition {
     public function is_available($not, \core_availability\info $info, $grabthelot, $userid) {
     global $DB;
 
-    $courseid = $this->cmid;
+    $courseid = $this->courseid;
     $allow = false;
 
     $sql = "SELECT timecompleted FROM {course_completions} WHERE course = :course AND userid = :userid";
